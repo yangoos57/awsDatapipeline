@@ -1,0 +1,8 @@
+datapane==0.15.7
+fastapi
+uvicorn
+matplotlib
+pandas
+urllib3==1.26.15
+requests-toolbelt==0.9.1
+boto3
