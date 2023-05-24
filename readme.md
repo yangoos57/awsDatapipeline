@@ -1,4 +1,6 @@
-# 리포팅 자동화를 위한 데이터 파이프라인 구축
+# 보고서 자동화를 위한 데이터 파이프라인 구축
+
+<br/>
 
 ```
 프로젝트 형태 : 1인 개발
@@ -42,39 +44,39 @@
 
 - 아래 구조를 가진 Dynamo DB 데이터를 Redshift에 저장할 수 있도록 array 유형의 데이터를 열 지향 데이터로 변환하는 ETL 프로세스 설계
 
-```
-  # Dynamo DB Item example.
-  item = {
-    query_id: "bdeca3e6-efe5-4728-9056-2464e931dec7",
-    query_date: "2023-05-16",
-    selected_lib: ["노원", "마포", "남산"],
-    isbn13_list: ["9791163030645","9791186710340","9788956748245"],
-    user_search: ["flask", "python","ML"],
-  };
-```
+  ```
+    # Dynamo DB Item example.
+    item = {
+      query_id: "bdeca3e6-efe5-4728-9056-2464e931dec7",
+      query_date: "2023-05-16",
+      selected_lib: ["노원", "마포", "남산"],
+      isbn13_list: ["9791163030645","9791186710340","9788956748245"],
+      user_search: ["flask", "python","ML"],
+    };
+  ```
 
 - AWS Glue와 Pyspark를 활용해 약 1,000만건의 데이터를 가공한 뒤 아래 데이터 구조로 Redshift에 저장
 
-```
-  # to isbn13_list
+  ```
+    # to isbn13_list
 
-  |   isbn13_list |                             query_id |
-  |--------------:|-------------------------------------:|
-  | 9791163030645 | bdeca3e6-efe5-4728-9056-2464e931dec7 |
+    |   isbn13_list |                             query_id |
+    |--------------:|-------------------------------------:|
+    | 9791163030645 | bdeca3e6-efe5-4728-9056-2464e931dec7 |
 
-  # to selected_lib
+    # to selected_lib
 
-  | selected_lib |                             query_id |
-  |-------------:|-------------------------------------:|
-  |         노원  | bdeca3e6-efe5-4728-9056-2464e931dec7 |
+    | selected_lib |                             query_id |
+    |-------------:|-------------------------------------:|
+    |         노원  | bdeca3e6-efe5-4728-9056-2464e931dec7 |
 
-  # to user_search
+    # to user_search
 
-  | user_search  |                             query_id |
-  |-------------:|-------------------------------------:|
-  |       flask  | bdeca3e6-efe5-4728-9056-2464e931dec7 |
+    | user_search  |                             query_id |
+    |-------------:|-------------------------------------:|
+    |       flask  | bdeca3e6-efe5-4728-9056-2464e931dec7 |
 
-```
+  ```
 
 <br/>
 
