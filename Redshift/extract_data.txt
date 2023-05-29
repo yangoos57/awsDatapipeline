@@ -1,0 +1,97 @@
+-- 1. total user_requests_success
+UNLOAD ('SELECT count(Distinct query_id) AS requests 
+           FROM success_user_search')
+TO 's3://dodomoabucket/redshift/{year}/{month}/{day}/user_requests_success-'
+IAM_ROLE 'arn:aws:iam::965780743476:role/service-role/AmazonRedshift-CommandsAccessRole-20230516T161213'
+FORMAT PARQUET
+ALLOWOVERWRITE;
+
+
+-- 2. total user_requests_failed
+UNLOAD ('SELECT count(Distinct query_id) AS requests 
+           FROM failed_user_search')
+TO 's3://dodomoabucket/redshift/{year}/{month}/{day}/user_requests_failed-'
+IAM_ROLE 'arn:aws:iam::965780743476:role/service-role/AmazonRedshift-CommandsAccessRole-20230516T161213'
+FORMAT PARQUET
+ALLOWOVERWRITE;
+
+-- 3. user_selection_per_recom
+UNLOAD ('SELECT AVG(count) AS user_select 
+FROM (
+  SELECT COUNT(*) AS count
+  FROM user_choice 
+  GROUP BY query_id
+) subquery;'
+)
+TO 's3://dodomoabucket/redshift/{year}/{month}/{day}/user_selection_per_recom-'
+IAM_ROLE 'arn:aws:iam::965780743476:role/service-role/AmazonRedshift-CommandsAccessRole-20230516T161213'
+FORMAT PARQUET
+ALLOWOVERWRITE;
+
+
+-- 4. count_book
+UNLOAD ('SELECT le.isbn13, re.bookname, le.count 
+    FROM (SELECT isbn13, count(*) AS count 
+          FROM isbn_13
+          GROUP BY isbn13
+          ORDER BY count DESC
+          LIMIT 100) AS le
+    LEFT JOIN book_info AS re
+    ON le.isbn13 = re.isbn13'
+)
+TO 's3://dodomoabucket/redshift/{year}/{month}/{day}/count_book-'
+IAM_ROLE 'arn:aws:iam::965780743476:role/service-role/AmazonRedshift-CommandsAccessRole-20230516T161213'
+FORMAT PARQUET
+ALLOWOVERWRITE;
+
+
+-- 5. count_lib
+UNLOAD ('SELECT lib, count(*) AS count 
+           FROM selected_lib 
+           GROUP BY lib 
+           ORDER BY count DESC'
+)
+TO 's3://dodomoabucket/redshift/{year}/{month}/{day}/count_lib-'
+IAM_ROLE 'arn:aws:iam::965780743476:role/service-role/AmazonRedshift-CommandsAccessRole-20230516T161213'
+FORMAT PARQUET
+ALLOWOVERWRITE;
+
+
+-- 6. count_keyword
+UNLOAD ('SELECT keyword, count(*) AS count 
+           FROM user_search 
+           GROUP BY keyword 
+           ORDER BY count DESC
+           LIMIT 100'
+)
+TO 's3://dodomoabucket/redshift/{year}/{month}/{day}/count_keyword-'
+IAM_ROLE 'arn:aws:iam::965780743476:role/service-role/AmazonRedshift-CommandsAccessRole-20230516T161213'
+FORMAT PARQUET
+ALLOWOVERWRITE;
+
+-- 7.count_query_user
+UNLOAD ('SELECT user_id, COUNT(DISTINCT query_id) AS count
+           FROM user_choice 
+           GROUP BY user_id
+           ORDER BY count DESC
+           LIMIT 100'
+)
+TO 's3://dodomoabucket/redshift/{year}/{month}/{day}/count_query_user-'
+IAM_ROLE 'arn:aws:iam::965780743476:role/service-role/AmazonRedshift-CommandsAccessRole-20230516T161213'
+FORMAT PARQUET
+ALLOWOVERWRITE;
+
+
+-- 8.failed_keyword_extract
+UNLOAD ('
+SELECT le.failed_keyword, COUNT(*) 
+FROM failed_user_search AS le
+LEFT JOIN success_user_search AS ri
+ON le.failed_keyword = ri.keyword
+WHERE ri.keyword IS NULL
+GROUP BY le.failed_keyword;'
+)
+TO 's3://dodomoabucket/redshift/{year}/{month}/{day}/failed_keyword_extract-'
+IAM_ROLE 'arn:aws:iam::965780743476:role/service-role/AmazonRedshift-CommandsAccessRole-20230516T161213'
+FORMAT PARQUET
+ALLOWOVERWRITE;

@@ -1,0 +1,118 @@
+-- Drop the existing book_info table
+DROP TABLE IF EXISTS book_info;
+
+-- Create the new book_info table with the desired schema
+CREATE TABLE book_info (
+ isbn13 VARCHAR(512),
+ bookname VARCHAR(1024),
+ authors VARCHAR(128),
+ publisher VARCHAR(128),
+ class_no VARCHAR(128),
+ reg_date VARCHAR(128),
+ bookImageURL VARCHAR(128)
+);
+
+-- Copy data into the book_info table from the specified S3 file
+COPY book_info
+FROM 's3://dodomoabucket/dodo-glue/dodo-book/book_info.parquet'
+IAM_ROLE 'arn:aws:iam::965780743476:role/service-role/AmazonRedshift-CommandsAccessRole-20230516T161213'
+PARQUET;
+
+--
+--
+--
+
+-- Drop the existing isbn_13 table
+DROP TABLE IF EXISTS isbn_13;
+
+-- Create the new isbn_13 table with the desired schema
+CREATE TABLE isbn_13 (
+ query_id VARCHAR(512),
+ isbn13 VARCHAR(128) 
+);
+
+-- Copy data into the book_info table from the specified S3 file
+COPY isbn_13
+FROM 's3://dodomoabucket/dodo-glue/dodo-rds/isbn_13/2023/5/20/part-00000-e85ad232-a718-4f34-b290-ce99d9d604b3-c000.snappy.parquet'
+IAM_ROLE 'arn:aws:iam::965780743476:role/service-role/AmazonRedshift-CommandsAccessRole-20230516T161213'
+PARQUET;
+
+--
+--
+--
+
+-- Drop the existing selected_lib table
+DROP TABLE IF EXISTS selected_lib;
+
+-- Create the new selected_lib table with the desired schema
+CREATE TABLE selected_lib (
+ query_id VARCHAR(512),
+ lib VARCHAR(128) 
+);
+
+-- Copy data into the book_info table from the specified S3 file
+COPY selected_lib
+FROM 's3://dodomoabucket/dodo-glue/dodo-rds/selected_lib/2023/5/20/part-00000-018f1173-3720-4b2f-b252-af5abe1ed7c3-c000.snappy.parquet'
+IAM_ROLE 'arn:aws:iam::965780743476:role/service-role/AmazonRedshift-CommandsAccessRole-20230516T161213'
+PARQUET;
+
+--
+--
+--
+
+-- Drop the existing user_search table
+DROP TABLE IF EXISTS success_user_search;
+
+-- Create the new user_search table with the desired schema
+CREATE TABLE success_user_search (
+ query_id VARCHAR(512),
+ keyword VARCHAR(128) 
+);
+
+-- Copy data into the book_info table from the specified S3 file
+COPY success_user_search
+FROM 's3://dodomoabucket/dodo-glue/dodo-dynamo/user_search/2023/5/20/part-00000-1c6ccdfc-386d-4cea-b129-701d3d2254f2-c000.snappy.parquet'
+IAM_ROLE 'arn:aws:iam::965780743476:role/service-role/AmazonRedshift-CommandsAccessRole-20230516T161213'
+PARQUET;
+
+--
+--
+--
+
+-- Drop the existing user_search table
+DROP TABLE IF EXISTS user_search;
+
+-- Create the new user_search table with the desired schema
+CREATE TABLE user_search (
+ query_id VARCHAR(512),
+ keyword VARCHAR(128) 
+);
+
+-- Copy data into the book_info table from the specified S3 file
+COPY user_search
+FROM 's3://dodomoabucket/dodo-glue/dodo-rds/user_search/2023/5/20/part-00000-feae0647-5b35-4ac7-b371-5593442db07d-c000.snappy.parquet'
+IAM_ROLE 'arn:aws:iam::965780743476:role/service-role/AmazonRedshift-CommandsAccessRole-20230516T161213'
+PARQUET;
+
+--
+--
+--
+
+-- Drop the existing failed_user_search table
+DROP TABLE IF EXISTS failed_user_search;
+
+-- Create the new failed_user_search table with the desired schema
+CREATE TABLE failed_user_search (
+ query_id VARCHAR(512),
+ failed_keyword VARCHAR(128) 
+);
+
+-- Copy data into the book_info table from the specified S3 file
+COPY failed_user_search
+FROM 's3://dodomoabucket/dodo-glue/dodo-dynamo/failed_user_search/2023/5/20/part-00000-4186058f-403e-4725-a952-2361db236420-c000.snappy.parquet'
+IAM_ROLE 'arn:aws:iam::965780743476:role/service-role/AmazonRedshift-CommandsAccessRole-20230516T161213'
+PARQUET;
+
+--
+--
+--
